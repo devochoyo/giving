@@ -15,6 +15,11 @@ def home():
     return render_template("home.html", currencies=CURRENCIES)
 
 
+@home_bp.route("/health")
+def health():
+    return "OK. API is active.", 200
+
+
 @payment_bp.route("/pay", methods=["POST"])
 def pay():
     name = request.form.get("name", "").strip()
