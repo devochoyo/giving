@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="glow glow-one"></div>
+  <div class="glow glow-two"></div>
+
+  <div class="card">
+    <div class="badge">&#10084;</div>
+    <h1>Support</h1>
+    <p class="subtitle">Your giving helps make the crusade in Nigeria possible. Thank you for standing with us.</p>
+
+    <div class="error-text" id="errorBox"></div>
+
+    <form id="supportForm" action="{{ url_for('payment.pay') }}" method="POST">
+      <div class="field">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" placeholder="John Doe" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="currency">Currency</label>
+          <select id="currency" name="currency" required>
+            {% for item in currencies %}
+            <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="amount">Amount</label>
+          <input type="number" id="amount" name="amount" placeholder="100" min="1" step="any" required>
+        </div>
+      </div>
+
+      <button type="submit" class="button" id="payButton">Continue to Payment</button>
+    </form>
+
+    <p class="secure">&#128274; Secure payment powered by Flutterwave</p>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

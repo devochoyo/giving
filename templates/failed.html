@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Failed</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="glow glow-one"></div>
+  <div class="glow glow-two"></div>
+
+  <div class="card">
+    <div class="badge bad">&#10005;</div>
+    <h1>Payment Failed</h1>
+    <p class="subtitle">Sorry, we could not complete your payment. No money was taken. Please try again.</p>
+    <a href="{{ url_for('home.home') }}" class="button">Try Again</a>
+  </div>
+</body>
+</html>
