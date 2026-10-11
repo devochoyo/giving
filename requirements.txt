@@ -5,4 +5,3 @@ python-dotenv
 gunicorn
 psycopg[binary]
 psycopg2-binary
-

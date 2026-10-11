@@ -46,11 +46,16 @@ def callback():
     reference = request.args.get("tx_ref")
     transaction_id = request.args.get("transaction_id")
 
-    if status == "successful" and reference and transaction_id:
-        if verify_payment(reference, transaction_id):
-            return redirect(url_for("success.success"))
-    elif reference:
+    if not reference:
+        return redirect(url_for("error.failed"))
+
+    if status == "cancelled":
         mark_failed(reference)
+        return redirect(url_for("error.failed"))
+
+    # we do not trust the url, Flutterwave decides if it was paid
+    if verify_payment(reference, transaction_id):
+        return redirect(url_for("success.success"))
 
     return redirect(url_for("error.failed"))
 

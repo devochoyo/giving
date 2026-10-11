@@ -60,36 +60,38 @@ def verify_payment(reference, transaction_id):
     """Ask Flutterwave if the payment really went through. Returns True or False."""
     payment = Payment.query.filter_by(reference=reference).first()
     if payment is None:
+        print("verify: no payment found for reference", reference)
         return False
 
     # already confirmed before (user refreshed the page)
     if payment.status == "paid":
         return True
 
+    if transaction_id:
+        url = FLW_URL + "/transactions/" + str(transaction_id) + "/verify"
+    else:
+        url = FLW_URL + "/transactions/verify_by_reference?tx_ref=" + reference
+
     try:
-        response = requests.get(
-            FLW_URL + "/transactions/" + str(transaction_id) + "/verify",
-            headers=get_headers(),
-            timeout=30,
-        )
+        response = requests.get(url, headers=get_headers(), timeout=30)
         result = response.json()
-    except Exception:
+    except Exception as error:
+        print("verify: request to Flutterwave failed:", error)
         return False
 
     data = result.get("data") or {}
 
     paid = (
-        result.get("status") == "success"
-        and data.get("status") == "successful"
+        data.get("status") == "successful"
         and data.get("tx_ref") == reference
-        and data.get("currency") == payment.currency
-        and float(data.get("amount", 0)) >= payment.amount
+        and str(data.get("currency", "")).upper() == payment.currency
+        and float(data.get("amount", 0)) >= payment.amount - 0.01
     )
 
-    if paid:
-        payment.status = "paid"
-    else:
-        payment.status = "failed"
+    if not paid:
+        print("verify: not accepted, Flutterwave answered:", result)
+
+    payment.status = "paid" if paid else "failed"
     db.session.commit()
 
     return paid
